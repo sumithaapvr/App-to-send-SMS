@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Server</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: rgb(231, 238, 249);
+            padding: 20px;
+            max-width: 400px;
+            margin: auto;
+            margin-top: 50px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        #messages {
+            background-color: white;
+            border: 1px solid #000;
+            padding: 10px;
+            height: 400px;
+            overflow-y: scroll;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 1.8rem;
+        }
+        .message {
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        .timestamp {
+            font-size: 0.8rem;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+    <h1>Messages</h1>
+    <div id="messages"></div>
+
+    <script>
+        function fetchMessages() {
+            $.get('/get_messages', function(data) {
+                $('#messages').empty();  // Clear the existing messages
+
+                // Iterate through each message and display it
+                data.forEach(function(message) {
+                    const parts = message.split('] ');  // Split timestamp and message
+                    const timestamp = parts[0].substring(1);  // Remove '[' from timestamp
+                    const msg = parts[1];  // The message after timestamp
+
+                    // Append message with timestamp
+                    $('#messages').append(
+                        `<div class="message">${msg} <span class="timestamp">(${timestamp})</span></div>`
+                    );
+                });
+            });
+        }
+
+        setInterval(fetchMessages, 1000);  // Fetch messages every 1 second
+    </script>
+</body>
+</html>

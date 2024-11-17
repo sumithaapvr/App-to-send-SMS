@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url("/static/images/xx.jpg");
+            padding: 20px;
+            max-width: 400px;
+            margin: auto;
+            margin-top: 150px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 1.8rem;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        input[type="text"] {
+            width: 98%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #response {
+            margin-top: 20px;
+            font-size: 1rem;
+            color: green;
+            text-align: center;
+        }
+
+        #error {
+            color: red;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Send SMS</h1>
+    <form id="sms">
+        <label for="ph">Phone Number:</label>
+        <input type="text" id="ph" name="ph" required>
+        <label for="message">Message:</label>
+        <input type="text" id="message" name="message" required>
+        <button type="submit">Send SMS</button>
+    </form>
+    <div id="response"></div>
+
+    <script>
+        $(document).ready(function() {
+            $('#sms').on('submit', function(e) {
+                e.preventDefault();
+
+                // Get the current time in hh:mm format
+                const currentTime = new Date();
+                const timeString = currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                // Send the AJAX request to the server
+                $.ajax({
+                    type: 'POST',
+                    url: '/send_sms',
+                    data: $(this).serialize(),
+                    success: function(data) {
+                        // Display message with timestamp (time of receiving response)
+                        $('#response').text(timeString + " - " + data.response);
+                        $('#message').val(''); // Clear the input field
+                    },
+                    error: function() {
+                        $('#response').text('An error occurred.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
